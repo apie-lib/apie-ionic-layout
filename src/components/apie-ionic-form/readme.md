@@ -9,12 +9,17 @@
 
 ### Depends on
 
+- ion-card
+- ion-card-content
 - apie-form
 
 ### Graph
 ```mermaid
 graph TD;
+  apie-ionic-form --> ion-card
+  apie-ionic-form --> ion-card-content
   apie-ionic-form --> apie-form
+  ion-card --> ion-ripple-effect
   apie-form --> apie-single-input
   apie-form --> apie-form-map
   apie-form --> apie-form-select
