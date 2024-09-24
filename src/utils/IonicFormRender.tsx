@@ -8,7 +8,7 @@ async function openFileDialog(callback: (newValue: any) => void)
     callback(fileData);
 }
 
-const flexBasis = { width: "100%", minWidth: 'fit', display: 'flex', alignItems: 'center', gap: '10px', flexBasis: 'auto' };
+const flexBasis = { width: "100%", minWidth: 'fit', display: 'flex', alignItems: 'center', gap: '10px', flexBasis: 'auto', overflow: 'visible' };
 
 export class IonicFormRender extends RenderInfo
 {
@@ -18,6 +18,7 @@ export class IonicFormRender extends RenderInfo
         this.singleInputRenderers = {
             text(state: InputState) {
               return <ion-input
+                style={ {"--padding-top": '4px'} }
                 label={state.label}
                 type="text"
                 label-placement="floating"
@@ -25,7 +26,7 @@ export class IonicFormRender extends RenderInfo
                 disabled={state.disabled}
                 onInput={(ev: any) => state.valueChanged(ev.target?.value)}
                 name={state.name}
-                value={toString(state.value)}/>;
+                value={toString(state.value)}></ion-input>;
             },
             textarea(state: InputState) {
                 return <ion-textarea
@@ -40,22 +41,22 @@ export class IonicFormRender extends RenderInfo
             },
             file(state: InputState) {
                 return (
-                  <div style={flexBasis}>
+                  <div style={flexBasis} onClick={(ev) => {ev.stopImmediatePropagation(); openFileDialog(state.valueChanged)}}>
                     <input type="file" style={ { display: 'none'} } disabled={state.disabled} onInput={(ev: any) => state.valueChanged(ev.target?.files[0])} name={state.name} files={state.value ? toFileList(state.value) : toEmptyFileList()}/>
                     <ion-input
-                        style={ (state.value as any)?.name ? {} : { 'fontStyle': 'italic' }}
-                        onClick={(ev) => {ev.stopImmediatePropagation(); openFileDialog(state.valueChanged)}}
+                        style={ (state.value as any)?.name ? {"--padding-top": '4px'} : { "--padding-top": '4px', 'fontStyle': 'italic' }}
                         label={state.label}
-                        label-placement="floating"
+                        label-placement={ state.value ? "floating" : 'stacked' }
                         fill="outline"
                         type="text"
                         placeholder="no file selected"
-                        value={(state.value as any)?.name}
+                        value={ state.value ? (state.value as any).name : 'no file selected'}
                         readonly
                         >{ state.value
-                            ? <ion-icon slot="end" icon="close-circle-outline" onClick={(ev) => { ev.stopImmediatePropagation(); state.valueChanged(null); } }></ion-icon>
+                            ? []
                             : <ion-icon slot="end" icon="cloud-upload"></ion-icon> }
                         </ion-input>
+                        { state.value && <ion-icon slot="end" icon="close-circle-outline" onClick={(ev) => { ev.stopImmediatePropagation(); state.valueChanged(null); } }></ion-icon> }
                     
                   </div>
                 );
