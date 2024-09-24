@@ -8,5 +8,7 @@
  * to consume components of this package as outlined in the `README.md`.
  */
 
-import '@ionic/core';
+export * from '@ionic/core';
 export type * from './components.d.ts';
+
+export type { Components, JSX } from './components.d.ts';
