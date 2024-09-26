@@ -6,18 +6,10 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
-    interface ApieDumm {
-    }
     interface ApieIonicForm {
     }
 }
 declare global {
-    interface HTMLApieDummElement extends Components.ApieDumm, HTMLStencilElement {
-    }
-    var HTMLApieDummElement: {
-        prototype: HTMLApieDummElement;
-        new (): HTMLApieDummElement;
-    };
     interface HTMLApieIonicFormElement extends Components.ApieIonicForm, HTMLStencilElement {
     }
     var HTMLApieIonicFormElement: {
@@ -25,17 +17,13 @@ declare global {
         new (): HTMLApieIonicFormElement;
     };
     interface HTMLElementTagNameMap {
-        "apie-dumm": HTMLApieDummElement;
         "apie-ionic-form": HTMLApieIonicFormElement;
     }
 }
 declare namespace LocalJSX {
-    interface ApieDumm {
-    }
     interface ApieIonicForm {
     }
     interface IntrinsicElements {
-        "apie-dumm": ApieDumm;
         "apie-ionic-form": ApieIonicForm;
     }
 }
@@ -43,7 +31,6 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "apie-dumm": LocalJSX.ApieDumm & JSXBase.HTMLAttributes<HTMLApieDummElement>;
             "apie-ionic-form": LocalJSX.ApieIonicForm & JSXBase.HTMLAttributes<HTMLApieIonicFormElement>;
         }
     }
