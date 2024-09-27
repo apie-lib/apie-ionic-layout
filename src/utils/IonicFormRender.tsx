@@ -1,5 +1,5 @@
 import { h, VNode }  from '@stencil/core';
-import { InputState, FallbackRenderInfo, RenderInfo, toString, toFileList, toEmptyFileList, FormGroupState, FormListRowState, FormListRowAddState } from 'apie-form-elements';
+import { InputState, FallbackRenderInfo, RenderInfo, toString, toFileList, toEmptyFileList, FormGroupState, FormListRowState, FormListRowAddState, SubmitButtonState } from 'apie-form-elements';
 
 async function openFileDialog(callback: (newValue: any) => void)
 {
@@ -83,6 +83,10 @@ export class IonicFormRender extends RenderInfo
                   </ion-select>
             },
         };
+    }
+
+    public renderSubmitButton(state: SubmitButtonState): VNode|VNode[] {
+        return <ion-button type="submit" disabled={state.disabled}>{state.label}</ion-button>
     }
 
     public renderFormGroup(state: FormGroupState, subElements: VNode[], key: number | string | null = null): VNode|VNode[] {
