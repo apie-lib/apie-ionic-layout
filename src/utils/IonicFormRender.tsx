@@ -1,5 +1,6 @@
 import { h, VNode }  from '@stencil/core';
-import { InputState, FallbackRenderInfo, RenderInfo, toString, toFileList, toEmptyFileList, FormGroupState, FormListRowState, FormListRowAddState, SubmitButtonState } from 'apie-form-elements';
+import { InputState, FallbackRenderInfo, RenderInfo, toString, toFileList, toEmptyFileList, FormGroupState, FormListRowState, FormListRowAddState, SubmitButtonState, createErrorMessage } from 'apie-form-elements';
+import { Constraint } from 'apie-form-elements/dist/types/components';
 
 async function openFileDialog(callback: (newValue: any) => void)
 {
@@ -83,6 +84,36 @@ export class IonicFormRender extends RenderInfo
                   </ion-select>
             },
         };
+    }
+
+    public renderValidationError(state: Constraint, value: any): VNode|VNode[]
+    {
+        const errorMessage: string | null = createErrorMessage(state, value);
+        const style = {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '15px',
+            backgroundColor: '#f8d7da',
+            color: '#721c24',
+            border: '1px solid #f5c6cb',
+            borderRadius: '5px',
+            fontSize: '14px',
+            margin: '15px',
+            maxWidth: '100%',
+        }
+        const iconStyle = {
+            margin: '10px',
+            fontSize: '18px',
+            color: '#721c24',
+        }
+        if (errorMessage) {
+            return <div style={style}>
+              <ion-icon name="alert-circle-outline" style={iconStyle}></ion-icon>
+              <span>{errorMessage}</span>
+            </div>
+        }
+        return [];
     }
 
     public renderSubmitButton(state: SubmitButtonState): VNode|VNode[] {
