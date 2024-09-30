@@ -25,10 +25,25 @@ export class IonicFormRender extends RenderInfo
                 label-placement="floating"
                 fill="outline" 
                 disabled={state.disabled}
-                onInput={(ev: any) => state.valueChanged(ev.target?.value)}
+                onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
                 name={state.name}
                 value={toString(state.value)}></ion-input>;
             },
+            password(state: InputState) {
+                return <ion-input
+                  style={ {"--padding-top": '4px'} }
+                  label={state.label}
+                  type="password"
+                  clear-input="true"
+                  label-placement="floating"
+                  fill="outline" 
+                  disabled={state.disabled}
+                  onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
+                  name={state.name}
+                  value={toString(state.value)}>
+                    {state.value && <ion-input-password-toggle slot="end"></ion-input-password-toggle>}
+                  </ion-input>;
+              },
             textarea(state: InputState) {
                 return <ion-textarea
                     label={state.label}
@@ -36,7 +51,7 @@ export class IonicFormRender extends RenderInfo
                     fill="outline" 
                     auto-grow="true"
                     disabled={state.disabled}
-                    onInput={(ev: any) => state.valueChanged(ev.target?.value)}
+                    onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
                     name={state.name}
                     value={toString(state.value)}></ion-textarea>;
             },
