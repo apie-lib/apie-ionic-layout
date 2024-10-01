@@ -104,6 +104,14 @@ export class IonicFormRender extends RenderInfo
     public renderValidationError(state: Constraint, value: any): VNode|VNode[]
     {
         const errorMessage: string | null = createErrorMessage(state, value);
+        if (errorMessage && state.serverSide) {
+            return <ul>
+                <li style={ errorMessage ? { color: '#B00' } : { color: '#080'}}>
+                    <ion-icon name={ errorMessage ? 'close-outline' : 'checkmark-outline' }></ion-icon>
+                    { state.message }
+                </li>
+            </ul>
+        }
         const style = {
             display: 'flex',
             alignItems: 'center',
