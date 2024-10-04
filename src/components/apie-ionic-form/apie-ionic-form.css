@@ -5,3 +5,8 @@ ion-input {
   padding: 8px;
   margin: 8px;
 }
+
+form {
+  max-height: 50px;
+  aspect-ratio: 0.5;
+}
