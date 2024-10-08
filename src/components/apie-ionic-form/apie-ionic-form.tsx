@@ -1,4 +1,4 @@
-import { Component, Element, h } from '@stencil/core';
+import { Component, Element, Prop, h } from '@stencil/core';
 import { IonicFormRender } from '../../utils/IonicFormRender';
 
 @Component({
@@ -9,6 +9,8 @@ import { IonicFormRender } from '../../utils/IonicFormRender';
 export class ApieIonicForm {
   @Element() el: HTMLElement;
 
+  @Prop({reflect: true}) polymorphicFormDefinition?: Record<string, string> = undefined;
+
   render() {
     const attributes = Array.from(this.el.attributes).reduce((acc, attr) => {
       acc[attr.name] = attr.value;
@@ -18,7 +20,7 @@ export class ApieIonicForm {
 
     return <ion-card>
       <ion-card-content>
-        <apie-form renderInfo={renderInfo} {...attributes}><slot></slot></apie-form>
+        <apie-form renderInfo={renderInfo} polymorphicFormDefinition={this.polymorphicFormDefinition} {...attributes}><slot></slot></apie-form>
       </ion-card-content>
     </ion-card>;
   }
