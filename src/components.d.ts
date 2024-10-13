@@ -7,6 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface ApieIonicForm {
+        "polymorphicFormDefinition"?: Record<string, string>;
     }
 }
 declare global {
@@ -22,6 +23,7 @@ declare global {
 }
 declare namespace LocalJSX {
     interface ApieIonicForm {
+        "polymorphicFormDefinition"?: Record<string, string>;
     }
     interface IntrinsicElements {
         "apie-ionic-form": ApieIonicForm;

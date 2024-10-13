@@ -147,8 +147,11 @@ export class IonicFormRender extends RenderInfo
         return <ion-list style={ { width: "100%" } } key={key ?? state.name}>{subElements.map((elm: VNode) => <ion-item style={ { width: "100%" } } class="ion-margin-bottom ion-margin-top">{elm}</ion-item>)}</ion-list>
     }
 
-    public renderListOrMapRow(state: FormListRowState, subElement: VNode): VNode|VNode[]
+    public renderListOrMapRow(state: FormListRowState, subElement: VNode|VNode[]): VNode|VNode[]
     {
+        if (Array.isArray(subElement) && subElement.length === 0) {
+            return [];
+        }
         if (!state.onRowRemove) {
             return subElement;
         }
