@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>Stencil Component Starter</title>
+
+    <script type="module" src="/build/apie-ionic-layout.esm.js"></script>
+    <script nomodule src="/build/apie-ionic-layout.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" rel="stylesheet">
+    <link href="/build/apie-ionic-layout.css" rel="stylesheet">
+  </head>
+  <body>
+    <ion-app>
+      <ion-content>
+    <apie-form-definition id="definition">
+      <apie-form-field-definition name="default" types="datetime" label="default"></apie-form-field-definition>
+      <apie-form-field-definition name="a" types="datetime" label="a"></apie-form-field-definition>
+      <apie-form-field-definition name="b" types="datetime" label="b"></apie-form-field-definition>
+      <apie-form-field-definition name="c" types="datetime" label="c"></apie-form-field-definition>
+      <apie-form-field-definition name="d" types="datetime" label="d"></apie-form-field-definition>
+      <apie-form-field-definition name="e" types="datetime" label="e"></apie-form-field-definition>
+      <apie-form-field-definition name="f" types="datetime" label="f"></apie-form-field-definition>
+      <apie-form-field-definition name="g" types="datetime" label="g"></apie-form-field-definition>
+      <apie-form-field-definition name="h" types="datetime" label="h"></apie-form-field-definition>
+      <apie-form-field-definition name="i" types="datetime" label="i"></apie-form-field-definition>
+      <apie-form-field-definition name="j" types="datetime" label="j"></apie-form-field-definition>
+      <apie-form-field-definition name="k" types="datetime" label="k"></apie-form-field-definition>
+      <apie-form-field-definition name="l" types="datetime" label="l"></apie-form-field-definition>
+      <apie-form-field-definition name="m" types="datetime" label="m"></apie-form-field-definition>
+      <apie-form-field-definition name="n" types="datetime" label="n"></apie-form-field-definition>
+      <apie-form-field-definition name="o" types="datetime" label="o"></apie-form-field-definition>
+      <apie-form-field-definition name="p" types="datetime" label="p"></apie-form-field-definition>
+      <apie-form-field-definition name="q" types="datetime" label="q"></apie-form-field-definition>
+      <apie-form-field-definition name="r" types="datetime" label="r"></apie-form-field-definition>
+      <apie-form-field-definition name="s" types="datetime" label="s"></apie-form-field-definition>
+      <apie-form-field-definition name="t" types="datetime" label="t"></apie-form-field-definition>
+      <apie-form-field-definition name="u" types="datetime" label="u"></apie-form-field-definition>
+      <apie-form-field-definition name="v" types="datetime" label="v"></apie-form-field-definition>
+      <apie-form-field-definition name="w" types="datetime" label="w"></apie-form-field-definition>
+      <apie-form-field-definition name="x" types="datetime" label="x"></apie-form-field-definition>
+      <apie-form-field-definition name="y" types="datetime" label="y"></apie-form-field-definition>
+      <apie-form-field-definition name="z" types="datetime" label="z"></apie-form-field-definition>
+    </apie-form-definition>
+    <apie-ionic-form definition-id="definition" method="get" debug-mode></apie-form>
+    </ion-content>
+  </ion-app>
+    <script>
+      for (let elm of document.querySelectorAll('apie-form-field-definition')) {
+        if (elm.attributes.name.value.length === 1) {
+          elm.additionalSettings = { dateFormat: elm.attributes.name.value };
+        }
+      }
+    </script>
+    
+</body>

@@ -1,3 +1,4 @@
+import { TextFieldTypes } from '@ionic/core';
 import { h, VNode }  from '@stencil/core';
 import { InputState, FallbackRenderInfo, RenderInfo, toString, toFileList, toEmptyFileList, FormGroupState, FormListRowState, FormListRowAddState, SubmitButtonState, createErrorMessage } from 'apie-form-elements';
 import { Constraint } from 'apie-form-elements/dist/types/components';
@@ -11,39 +12,65 @@ async function openFileDialog(callback: (newValue: any) => void)
 
 const flexBasis = { width: "100%", minWidth: 'fit', display: 'flex', alignItems: 'center', gap: '10px', flexBasis: 'auto', overflow: 'visible' };
 
+function renderIonInput(
+    state: InputState,
+    type: TextFieldTypes,
+    subNodes: VNode[]|VNode = [],
+    attributes: any = {}
+) {
+    return <ion-input
+          style={ {"--padding-top": '4px'} }
+          label={state.label}
+          type={type}
+          label-placement="floating"
+          fill="outline" 
+          disabled={state.disabled}
+          onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
+          name={state.name}
+          value={toString(state.value)}
+          {...attributes}
+          >{subNodes}</ion-input>;
+}
+
 export class IonicFormRender extends RenderInfo
 {
     constructor(
     ) {
         super(new FallbackRenderInfo());
         this.singleInputRenderers = {
+            "date-display"(state: InputState) {
+                return renderIonInput(state, 'text', <ion-icon slot="end" icon="calendar-outline"></ion-icon>)
+            },
+            "date-hours"(state: InputState) {
+                return renderIonInput(state, 'number', [], { placeholder: 'HH', label: 'Hours', style: {"--padding-top": '4px', maxWidth: '33%' } })
+            },
+            "date-minutes"(state: InputState) {
+                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Minutes', style: {"--padding-top": '4px', maxWidth: '33%' } })
+            },
+            "date-seconds"(state: InputState) {
+                return renderIonInput(state, 'number', [], { placeholder: 'SS', label: 'Seconds', style: {"--padding-top": '4px', maxWidth: '33%' } })
+            },
+            "date-milliseconds"(state: InputState) {
+                return renderIonInput(state, 'number', [], { placeholder: 'Ms', label: 'Milliseconds', style: {"--padding-top": '4px', maxWidth: '33%' } })
+            },
+            "date-microseconds"(state: InputState) {
+                return renderIonInput(state, 'number', [], { placeholder: '000000', label: 'Microseconds', style: {"--padding-top": '4px', maxWidth: '33%' } })
+            },
+            "date-date"(state: InputState) {
+                return renderIonInput(state, 'number', [], { placeholder: 'DD', label: 'Date', style: {"--padding-top": '4px', maxWidth: '33%' } })
+            },
+            "date-month"(state: InputState) {
+                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Month', style: {"--padding-top": '4px', maxWidth: '33%' } })
+            },
+            "date-year"(state: InputState) {
+                return renderIonInput(state, 'number', [], { placeholder: 'YYYY', label: 'Year', style: {"--padding-top": '4px', maxWidth: '33%' } })
+            },
             text(state: InputState) {
-              return <ion-input
-                style={ {"--padding-top": '4px'} }
-                label={state.label}
-                type="text"
-                label-placement="floating"
-                fill="outline" 
-                disabled={state.disabled}
-                onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
-                name={state.name}
-                value={toString(state.value)}></ion-input>;
+              return renderIonInput(state, 'text');
             },
             password(state: InputState) {
-                return <ion-input
-                  style={ {"--padding-top": '4px'} }
-                  label={state.label}
-                  type="password"
-                  clear-input="true"
-                  label-placement="floating"
-                  fill="outline" 
-                  disabled={state.disabled}
-                  onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
-                  name={state.name}
-                  value={toString(state.value)}>
-                    {state.value && <ion-input-password-toggle slot="end"></ion-input-password-toggle>}
-                  </ion-input>;
-              },
+                return renderIonInput(state, 'password', state.value && <ion-input-password-toggle slot="end"></ion-input-password-toggle>)
+            },
             textarea(state: InputState) {
                 return <ion-textarea
                     label={state.label}
@@ -80,6 +107,7 @@ export class IonicFormRender extends RenderInfo
             select(state: InputState) {
                 if (!Array.isArray(state.additionalSettings?.options)) {
                   return <ion-select
+                    label={state.label}
                     label-placement="floating"
                     fill="outline"
                     value={state.value}
@@ -90,6 +118,7 @@ export class IonicFormRender extends RenderInfo
               
                 return <ion-select
                     interface="popover"
+                    label={state.label}
                     label-placement="floating"
                     fill="outline"
                     disabled={state.disabled}
