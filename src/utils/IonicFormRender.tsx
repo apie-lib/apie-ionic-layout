@@ -1,6 +1,6 @@
 import { TextFieldTypes } from '@ionic/core';
 import { h, VNode }  from '@stencil/core';
-import { InputState, FallbackRenderInfo, RenderInfo, toString, toFileList, toEmptyFileList, FormGroupState, FormListRowState, FormListRowAddState, SubmitButtonState, createErrorMessage } from 'apie-form-elements';
+import { InputState, FallbackRenderInfo, RenderInfo, toString, toArray, toFileList, toEmptyFileList, FormGroupState, FormListRowState, FormListRowAddState, SubmitButtonState, createErrorMessage } from 'apie-form-elements';
 import { Constraint } from 'apie-form-elements/dist/types/components';
 
 async function openFileDialog(callback: (newValue: any) => void)
@@ -103,6 +103,31 @@ export class IonicFormRender extends RenderInfo
                     
                   </div>
                 );
+            },
+            multi(state: InputState) {
+                const value = new Set(toArray(state.value));
+                if (!Array.isArray(state.additionalSettings?.options)) {
+                  return <ion-select
+                    label={state.label}
+                    label-placement="floating"
+                    fill="outline"
+                    value={state.value}
+                    disabled>
+                        <ion-select-option value={state.value}>{toString(value)}</ion-select-option>
+                    </ion-select>
+                }
+              
+                return <ion-select
+                    interface="popover"
+                    label={state.label}
+                    label-placement="floating"
+                    fill="outline"
+                    multiple
+                    disabled={state.disabled}
+                    value={Array.from(value)}
+                    onIonChange={(ev: any) => state.valueChanged(ev.target.value)}>
+                  {state.additionalSettings.options.map((opt) => <ion-select-option value={toString(opt.value as any)}>{opt.name}</ion-select-option>)}
+                  </ion-select>
             },
             select(state: InputState) {
                 if (!Array.isArray(state.additionalSettings?.options)) {
