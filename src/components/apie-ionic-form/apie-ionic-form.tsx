@@ -1,5 +1,6 @@
 import { Component, Element, Prop, h } from '@stencil/core';
 import { IonicFormRender } from '../../utils/IonicFormRender';
+import type{ NestedRecord, Primitive, SubmitField } from 'apie-form-elements/dist/types/components';
 
 @Component({
   tag: 'apie-ionic-form',
@@ -8,6 +9,11 @@ import { IonicFormRender } from '../../utils/IonicFormRender';
 })
 export class ApieIonicForm {
   @Element() el: HTMLElement;
+
+  @Prop({reflect: true, mutable: true}) value: NestedRecord<SubmitField> = {};
+  @Prop({reflect: true, mutable: true}) internalState: NestedRecord<Primitive> = {};
+  @Prop({reflect: true, mutable: true}) validationErrors: NestedRecord<string> = {};
+
 
   @Prop({reflect: true}) polymorphicFormDefinition?: Record<string, string> = undefined;
 
@@ -20,7 +26,13 @@ export class ApieIonicForm {
 
     return <ion-card>
       <ion-card-content>
-        <apie-form renderInfo={renderInfo} polymorphicFormDefinition={this.polymorphicFormDefinition} {...attributes}><slot></slot></apie-form>
+        <apie-form
+          value={this.value}
+          internalState={this.internalState}
+          validationErrors={this.validationErrors}
+          renderInfo={renderInfo} 
+          polymorphicFormDefinition={this.polymorphicFormDefinition}
+          {...attributes}><slot></slot></apie-form>
       </ion-card-content>
     </ion-card>;
   }

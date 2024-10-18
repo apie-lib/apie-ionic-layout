@@ -5,9 +5,14 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { NestedRecord, Primitive, SubmitField } from "apie-form-elements/dist/types/components";
+export { NestedRecord, Primitive, SubmitField } from "apie-form-elements/dist/types/components";
 export namespace Components {
     interface ApieIonicForm {
+        "internalState": NestedRecord<Primitive>;
         "polymorphicFormDefinition"?: Record<string, string>;
+        "validationErrors": NestedRecord<string>;
+        "value": NestedRecord<SubmitField>;
     }
 }
 declare global {
@@ -23,7 +28,10 @@ declare global {
 }
 declare namespace LocalJSX {
     interface ApieIonicForm {
+        "internalState"?: NestedRecord<Primitive>;
         "polymorphicFormDefinition"?: Record<string, string>;
+        "validationErrors"?: NestedRecord<string>;
+        "value"?: NestedRecord<SubmitField>;
     }
     interface IntrinsicElements {
         "apie-ionic-form": ApieIonicForm;
