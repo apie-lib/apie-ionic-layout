@@ -68,6 +68,12 @@ export class IonicFormRender extends RenderInfo
             text(state: InputState) {
               return renderIonInput(state, 'text');
             },
+            number(state: InputState) {
+                return renderIonInput(state, 'number');
+            },
+            integer(state: InputState) {
+                return renderIonInput(state, 'number');
+            },
             password(state: InputState) {
                 return renderIonInput(state, 'password', state.value && <ion-input-password-toggle slot="end"></ion-input-password-toggle>)
             },
