@@ -18,8 +18,18 @@ function renderIonInput(
     subNodes: VNode[]|VNode = [],
     attributes: any = {}
 ) {
-    return <ion-input
+    const messages = state.validationResult.messages.filter((v) => !v.valid && v.message && v.serverSide)
+        .map((v) => {
+            v.message
+        }).join("\n");
+    const checks = state.validationResult.messages.filter((v) => v.message && !v.serverSide)
+        .map((v) => {
+            return <ion-row><ion-col><ion-note>{ v.message }</ion-note></ion-col><ion-col><ion-note>{ v.valid ? '✅' : '❌' }<br /></ion-note></ion-col></ion-row>
+        })
+    return [
+        <ion-input
           style={ {"--padding-top": '4px'} }
+          class={'ion-touched' + (state.validationResult.valid ? '' : ' ion-invalid')}
           label={state.label}
           type={type}
           label-placement="floating"
@@ -28,8 +38,11 @@ function renderIonInput(
           onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
           name={state.name}
           value={toString(state.value)}
+          error-text={messages || null}
           {...attributes}
-          >{subNodes}</ion-input>;
+          >{subNodes}</ion-input>,
+        <ion-grid>{checks}</ion-grid>
+    ];
 }
 
 export class IonicFormRender extends RenderInfo

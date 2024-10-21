@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>Stencil Component Starter</title>
+
+    <script type="module" src="/build/apie-ionic-layout.esm.js"></script>
+    <script nomodule src="/build/apie-ionic-layout.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" rel="stylesheet">
+    <link href="/build/apie-ionic-layout.css" rel="stylesheet">
+  </head>
+  <body>
+    <apie-form-definition id="definition">
+      <apie-form-field-definition name="default" types="text" label="default">
+        <apie-constraint-check-definition exact-match="Pizza" message="Pizza is not allowed"></apie-constraint-check-definition>
+        <apie-constraint-check-definition min-length="1" max-length="5" message="should be between 1-5 characters"></apie-constraint-check-definition>
+        <apie-constraint-check-definition pattern="[0-9]" inverse-check message="0-9 is not allowed"></apie-constraint-check-definition>
+      </apie-form-field-definition>
+    </apie-form-definition>
+    <apie-ionic-form definition-id="definition" method="get" debug-mode></apie-form>
+    <script src="/pages/hydrateFromLocation.js">
+    </script>
+</body>
