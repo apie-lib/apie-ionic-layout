@@ -41,7 +41,7 @@ function renderIonInput(
           error-text={messages || null}
           {...attributes}
           >{subNodes}</ion-input>,
-        <ion-grid>{checks}</ion-grid>
+        <ion-grid style={ { "width": "100%" }}>{checks}</ion-grid>
     ];
 }
 
