@@ -24,7 +24,7 @@ function renderIonInput(
         }).join("\n");
     const checks = state.validationResult.messages.filter((v) => v.message && !v.serverSide)
         .map((v) => {
-            return <ion-row><ion-col><ion-note>{ v.message }</ion-note></ion-col><ion-col><ion-note>{ v.valid ? '✅' : '❌' }<br /></ion-note></ion-col></ion-row>
+            return <ion-row><ion-col><ion-note>{ v.message }</ion-note></ion-col><ion-col><ion-note style={{fontSize: 'xx-large'}}>{ v.valid ? '✅' : '❌' }<br /></ion-note></ion-col></ion-row>
         })
     return <ion-grid>
         <ion-row>
@@ -45,7 +45,7 @@ function renderIonInput(
                     >{subNodes}</ion-input>
             </ion-col>
             <ion-col>
-                {(state.validationResult.valid && undefined === state.serverValidationError[''])  ? <div style={{color: 'green'}}>✅</div> : <div style={{color: 'red'}}>❌</div>}
+                {(state.validationResult.valid && undefined === state.serverValidationError[''])  ? <div style={{color: 'green', fontSize: 'xx-large'}}>✅</div> : <div style={{color: 'red', fontSize: 'xx-large'}}>❌</div>}
             </ion-col>
         </ion-row>
         {Object.keys(state.serverValidationError).length > 0 && <ion-row style={{ color: 'red', fontWeight: 'bold', padding: '10px', backgroundColor: '#fdd' }}>
@@ -65,28 +65,28 @@ export class IonicFormRender extends RenderInfo
                 return renderIonInput(state, 'text', <ion-icon slot="end" icon="calendar-outline"></ion-icon>)
             },
             "date-hours"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'HH', label: 'Hours', style: {"--padding-top": '4px', maxWidth: '33%' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'HH', label: 'Hours', style: {"--padding-top": '4px' } })
             },
             "date-minutes"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Minutes', style: {"--padding-top": '4px', maxWidth: '33%' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Minutes', style: {"--padding-top": '4px' } })
             },
             "date-seconds"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'SS', label: 'Seconds', style: {"--padding-top": '4px', maxWidth: '33%' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'SS', label: 'Seconds', style: {"--padding-top": '4px' } })
             },
             "date-milliseconds"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'Ms', label: 'Milliseconds', style: {"--padding-top": '4px', maxWidth: '33%' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'Ms', label: 'Milliseconds', style: {"--padding-top": '4px' } })
             },
             "date-microseconds"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: '000000', label: 'Microseconds', style: {"--padding-top": '4px', maxWidth: '33%' } })
+                return renderIonInput(state, 'number', [], { placeholder: '000000', label: 'Microseconds', style: {"--padding-top": '4px' } })
             },
             "date-date"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'DD', label: 'Date', style: {"--padding-top": '4px', maxWidth: '33%' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'DD', label: 'Date', style: {"--padding-top": '4px' } })
             },
             "date-month"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Month', style: {"--padding-top": '4px', maxWidth: '33%' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Month', style: {"--padding-top": '4px' } })
             },
             "date-year"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'YYYY', label: 'Year', style: {"--padding-top": '4px', maxWidth: '33%' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'YYYY', label: 'Year', style: {"--padding-top": '4px' } })
             },
             text(state: InputState) {
               return renderIonInput(state, 'text');
