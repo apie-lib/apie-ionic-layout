@@ -19,6 +19,9 @@
       </apie-form-field-definition>
     </apie-form-definition>
     <apie-ionic-form definition-id="definition" method="get" debug-mode></apie-form>
+    <script>
+        document.querySelector('apie-ionic-form').validationErrors = { default: 'this is an error' }
+    </script>
     <script src="/pages/hydrateFromLocation.js">
     </script>
 </body>

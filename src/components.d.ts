@@ -9,6 +9,7 @@ import { NestedRecord, Primitive, SubmitField } from "apie-form-elements/dist/ty
 export { NestedRecord, Primitive, SubmitField } from "apie-form-elements/dist/types/components";
 export namespace Components {
     interface ApieIonicForm {
+        "initialValue"?: NestedRecord<SubmitField>;
         "internalState": NestedRecord<Primitive>;
         "polymorphicFormDefinition"?: Record<string, string>;
         "validationErrors": NestedRecord<string>;
@@ -28,6 +29,7 @@ declare global {
 }
 declare namespace LocalJSX {
     interface ApieIonicForm {
+        "initialValue"?: NestedRecord<SubmitField>;
         "internalState"?: NestedRecord<Primitive>;
         "polymorphicFormDefinition"?: Record<string, string>;
         "validationErrors"?: NestedRecord<string>;

@@ -26,23 +26,33 @@ function renderIonInput(
         .map((v) => {
             return <ion-row><ion-col><ion-note>{ v.message }</ion-note></ion-col><ion-col><ion-note>{ v.valid ? '✅' : '❌' }<br /></ion-note></ion-col></ion-row>
         })
-    return [
-        <ion-input
-          style={ {"--padding-top": '4px'} }
-          class={'ion-touched' + (state.validationResult.valid ? '' : ' ion-invalid')}
-          label={state.label}
-          type={type}
-          label-placement="floating"
-          fill="outline" 
-          disabled={state.disabled}
-          onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
-          name={state.name}
-          value={toString(state.value)}
-          error-text={messages || null}
-          {...attributes}
-          >{subNodes}</ion-input>,
-        <ion-grid style={ { "width": "100%" }}>{checks}</ion-grid>
-    ];
+    return <ion-grid>
+        <ion-row>
+            <ion-col size="11">
+                <ion-input
+                    style={ {"--padding-top": '4px'} }
+                    class={'ion-touched' + ((state.validationResult.valid && undefined === state.serverValidationError['']) ? '' : ' ion-invalid')}
+                    label={state.label}
+                    type={type}
+                    label-placement="floating"
+                    fill="outline" 
+                    disabled={state.disabled}
+                    onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
+                    name={state.name}
+                    value={toString(state.value)}
+                    error-text={messages || null}
+                    {...attributes}
+                    >{subNodes}</ion-input>
+            </ion-col>
+            <ion-col>
+                {(state.validationResult.valid && undefined === state.serverValidationError[''])  ? <div style={{color: 'green'}}>✅</div> : <div style={{color: 'red'}}>❌</div>}
+            </ion-col>
+        </ion-row>
+        {Object.keys(state.serverValidationError).length > 0 && <ion-row style={{ color: 'red', fontWeight: 'bold', padding: '10px', backgroundColor: '#fdd' }}>
+            <ion-col>{Object.entries(state.serverValidationError).map((v) => toString(v[1] as any)) }</ion-col>
+        </ion-row>}
+        {checks}
+    </ion-grid>;
 }
 
 export class IonicFormRender extends RenderInfo
