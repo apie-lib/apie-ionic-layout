@@ -1,6 +1,6 @@
 import { TextFieldTypes } from '@ionic/core';
 import { h, VNode }  from '@stencil/core';
-import { InputState, FallbackRenderInfo, RenderInfo, toString, toArray, toFileList, toEmptyFileList, FormGroupState, FormListRowState, FormListRowAddState, SubmitButtonState, createErrorMessage } from 'apie-form-elements';
+import { InputState, FieldWrapperOptions, FallbackRenderInfo, RenderInfo, toString, toArray, toFileList, toEmptyFileList, FormGroupState, FormListRowState, FormListRowAddState, SubmitButtonState, createErrorMessage } from 'apie-form-elements';
 import { Constraint } from 'apie-form-elements/dist/types/components';
 
 async function openFileDialog(callback: (newValue: any) => void)
@@ -36,7 +36,8 @@ function renderServerSideValidationErrors(state: InputState): VNode[] {
     </ion-row>;
 }
 
-function renderFieldRow(content: VNode|VNode[], state: InputState, canEnterEmptyString: boolean = true): VNode|VNode[]{
+function renderFieldRow(content: VNode|VNode[], state: InputState, fieldWrapOptions: FieldWrapperOptions = {}): VNode|VNode[]{
+    const canEnterEmptyString = fieldWrapOptions.canEnterEmptyString !== false;
     return <ion-grid>
         <ion-row class="ion-align-items-center ion-no-padding" style={{ alignContent: 'center', alignItems: 'center' }}>
             <ion-col>
@@ -79,10 +80,10 @@ function renderIonInput(
         >{subNodes}</ion-input>;
 
     return wrapRow
-        ? renderFieldRow(
+        ? state.currentFieldWrapper(
             ionInput,
             state,
-            canEnterEmptyString
+            { canEnterEmptyString }
         ) : ionInput;
 }
 
@@ -132,7 +133,7 @@ export class IonicFormRender extends RenderInfo
                 return renderIonInput(state, 'password', state.value && <ion-input-password-toggle slot="end"></ion-input-password-toggle>)
             },
             textarea(state: InputState) {
-                return renderFieldRow(
+                return state.currentFieldWrapper(
                     <ion-textarea
                         label={state.label}
                         label-placement="floating"
@@ -181,7 +182,7 @@ export class IonicFormRender extends RenderInfo
             multi(state: InputState) {
                 const value = new Set(toArray(state.value));
                 if (!Array.isArray(state.additionalSettings?.options)) {
-                  return renderFieldRow(
+                  return state.currentFieldWrapper(
                     <ion-select
                         label={state.label}
                         label-placement="floating"
@@ -191,11 +192,13 @@ export class IonicFormRender extends RenderInfo
                             <ion-select-option value={state.value}>{toString(value)}</ion-select-option>
                         </ion-select>,
                         state,
-                        false
+                        {
+                            canEnterEmptyString: false,
+                        }
                   );
                 }
               
-                return renderFieldRow(
+                return state.currentFieldWrapper(
                     <ion-select
                         interface="popover"
                         label={state.label}
@@ -208,12 +211,14 @@ export class IonicFormRender extends RenderInfo
                     {state.additionalSettings.options.map((opt) => <ion-select-option value={toString(opt.value as any)}>{opt.name}</ion-select-option>)}
                     </ion-select>,
                     state,
-                    false
+                    {
+                        canEnterEmptyString: false,
+                    }
                 );
             },
             select(state: InputState) {
                 if (!Array.isArray(state.additionalSettings?.options)) {
-                  return renderFieldRow(
+                  return state.currentFieldWrapper(
                     <ion-select
                         label={state.label}
                         label-placement="floating"
@@ -223,11 +228,13 @@ export class IonicFormRender extends RenderInfo
                             <ion-select-option value={state.value}>{state.value}</ion-select-option>
                         </ion-select>,
                         state,
-                        false
+                        {
+                            canEnterEmptyString: false,
+                        }
                   );
                 }
               
-                return renderFieldRow(
+                return state.currentFieldWrapper(
                     <ion-select
                         interface="popover"
                         label={state.label}
@@ -239,7 +246,9 @@ export class IonicFormRender extends RenderInfo
                     {state.additionalSettings.options.map((opt) => <ion-select-option value={toString(opt.value as any)}>{opt.name}</ion-select-option>)}
                     </ion-select>,
                     state,
-                    false
+                    {
+                        canEnterEmptyString: false,
+                    }
                 );
             },
         };
@@ -316,5 +325,10 @@ export class IonicFormRender extends RenderInfo
             { keyField }
             { button }
             </div>;
+    }
+
+    public createFieldWrapper()
+    {
+        return renderFieldRow;
     }
 }
