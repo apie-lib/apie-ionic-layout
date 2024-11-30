@@ -12,47 +12,78 @@ async function openFileDialog(callback: (newValue: any) => void)
 
 const flexBasis = { width: "100%", minWidth: 'fit', display: 'flex', alignItems: 'center', gap: '10px', flexBasis: 'auto', overflow: 'visible' };
 
+function renderClientSideValidationErrors(state: InputState): VNode[] {
+    return  state.validationResult.messages.filter((v) => v.message && !v.serverSide)
+        .map((v) => {
+            return <ion-row>
+                <ion-col></ion-col>
+                <ion-col size="10">
+                    <ion-note>{ v.message }</ion-note>
+                </ion-col>
+                <ion-col>
+                    <ion-note style={{fontSize: 'xx-large', filter: (v.valid || !state.touched) ? "grayscale(0%)" : "grayscale(100%)", opacity: v.valid ? '100%' : '25%'}}>
+                        { (v.valid || !state.touched) ? '✅' : '❌' }<br />
+                    </ion-note>
+                </ion-col>
+            </ion-row>
+        })
+}
+
+function renderServerSideValidationErrors(state: InputState): VNode[] {
+    return Object.keys(state.serverValidationError).length > 0 && <ion-row  class="ion-align-items-center ion-no-padding" style={{ color: 'red', fontWeight: 'bold', padding: '10px', backgroundColor: '#fdd' }}>
+        <ion-col></ion-col>
+        <ion-col size="10">{Object.entries(state.serverValidationError).map((v) => toString(v[1] as any)) }</ion-col>
+    </ion-row>;
+}
+
+function renderFieldRow(content: VNode|VNode[], state: InputState, canEnterEmptyString: boolean = true): VNode|VNode[]{
+    return <ion-grid>
+        <ion-row class="ion-align-items-center ion-no-padding" style={{ alignContent: 'center', alignItems: 'center' }}>
+            <ion-col>
+            { state.allowsNull && (!canEnterEmptyString || state.emptyStringAllowed) && <ion-toggle disabled={state.disabled} checked={state.value !== null} onClick={(ev) => { state.onTouched(); if (!(ev.target as any).checked) { state.valueChanged(null); } else { state.valueChanged(''); }}} /> }
+            </ion-col>
+            <ion-col size="10">
+                {content}
+            </ion-col>
+            <ion-col>
+                {(state.validationResult.valid && undefined === state.serverValidationError[''])  ? <div style={{color: 'green', fontSize: 'xx-large'}}>✅</div> : <div style={{color: 'green', filter: "grayscale(100%)", fontSize: 'xx-large'}}>✅</div>}
+            </ion-col>
+        </ion-row>
+        {renderServerSideValidationErrors(state)}
+        {renderClientSideValidationErrors(state)}
+    </ion-grid>;
+}
+
 function renderIonInput(
     state: InputState,
     type: TextFieldTypes,
     subNodes: VNode[]|VNode = [],
-    attributes: any = {}
+    attributes: any = {},
+    canEnterEmptyString: boolean = true,
+    wrapRow: boolean = true
 ) {
-    const messages = state.validationResult.messages.filter((v) => !v.valid && v.message && v.serverSide)
-        .map((v) => {
-            v.message
-        }).join("\n");
-    const checks = state.validationResult.messages.filter((v) => v.message && !v.serverSide)
-        .map((v) => {
-            return <ion-row><ion-col><ion-note>{ v.message }</ion-note></ion-col><ion-col><ion-note style={{fontSize: 'xx-large'}}>{ v.valid ? '✅' : '❌' }<br /></ion-note></ion-col></ion-row>
-        })
-    return <ion-grid>
-        <ion-row>
-            <ion-col size="11">
-                <ion-input
-                    style={ {"--padding-top": '4px'} }
-                    class={'ion-touched' + ((state.validationResult.valid && undefined === state.serverValidationError['']) ? '' : ' ion-invalid')}
-                    label={state.label}
-                    type={type}
-                    label-placement="floating"
-                    fill="outline" 
-                    disabled={state.disabled}
-                    onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
-                    name={state.name}
-                    value={toString(state.value)}
-                    error-text={messages || null}
-                    {...attributes}
-                    >{subNodes}</ion-input>
-            </ion-col>
-            <ion-col>
-                {(state.validationResult.valid && undefined === state.serverValidationError[''])  ? <div style={{color: 'green', fontSize: 'xx-large'}}>✅</div> : <div style={{color: 'red', fontSize: 'xx-large'}}>❌</div>}
-            </ion-col>
-        </ion-row>
-        {Object.keys(state.serverValidationError).length > 0 && <ion-row style={{ color: 'red', fontWeight: 'bold', padding: '10px', backgroundColor: '#fdd' }}>
-            <ion-col>{Object.entries(state.serverValidationError).map((v) => toString(v[1] as any)) }</ion-col>
-        </ion-row>}
-        {checks}
-    </ion-grid>;
+    const disabled = state.disabled || (state.allowsNull && state.emptyStringAllowed && state.value === null);       
+    const ionInput = <ion-input
+        style={ {"--padding-top": '4px'} }
+        class={(state.touched ? 'ion-touched' : '') + ((state.validationResult.valid && undefined === state.serverValidationError['']) ? '' : ' ion-invalid')}
+        label={state.label}
+        type={type}
+        label-placement="floating"
+        fill="outline" 
+        disabled={disabled}
+        onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
+        onIonBlur={() => state.onTouched()}
+        name={state.name}
+        value={toString(state.value)}
+        {...attributes}
+        >{subNodes}</ion-input>;
+
+    return wrapRow
+        ? renderFieldRow(
+            ionInput,
+            state,
+            canEnterEmptyString
+        ) : ionInput;
 }
 
 export class IonicFormRender extends RenderInfo
@@ -62,31 +93,31 @@ export class IonicFormRender extends RenderInfo
         super(new FallbackRenderInfo());
         this.singleInputRenderers = {
             "date-display"(state: InputState) {
-                return renderIonInput(state, 'text', <ion-icon slot="end" icon="calendar-outline"></ion-icon>)
+                return renderIonInput(state, 'text', <ion-icon slot="end" icon="calendar-outline"></ion-icon>, { style: {"--padding-top": '4px' } }, false, false)
             },
             "date-hours"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'HH', label: 'Hours', style: {"--padding-top": '4px' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'HH', label: 'Hours', style: {"--padding-top": '4px', margin: "5px" } }, false, false)
             },
             "date-minutes"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Minutes', style: {"--padding-top": '4px' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Minutes', style: {"--padding-top": '4px', margin: "5px" } }, false, false)
             },
             "date-seconds"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'SS', label: 'Seconds', style: {"--padding-top": '4px' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'SS', label: 'Seconds', style: {"--padding-top": '4px', margin: "5px" } }, false, false)
             },
             "date-milliseconds"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'Ms', label: 'Milliseconds', style: {"--padding-top": '4px' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'Ms', label: 'Milliseconds', style: {"--padding-top": '4px', margin: "5px" } }, false, false)
             },
             "date-microseconds"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: '000000', label: 'Microseconds', style: {"--padding-top": '4px' } })
+                return renderIonInput(state, 'number', [], { placeholder: '000000', label: 'Microseconds', style: {"--padding-top": '4px', margin: "5px" } }, false, false)
             },
             "date-date"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'DD', label: 'Date', style: {"--padding-top": '4px' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'DD', label: 'Date', style: {"--padding-top": '4px', margin: "5px" } }, false, false)
             },
             "date-month"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Month', style: {"--padding-top": '4px' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'MM', label: 'Month', style: {"--padding-top": '4px', margin: "5px" } }, false, false)
             },
             "date-year"(state: InputState) {
-                return renderIonInput(state, 'number', [], { placeholder: 'YYYY', label: 'Year', style: {"--padding-top": '4px' } })
+                return renderIonInput(state, 'number', [], { placeholder: 'YYYY', label: 'Year', style: {"--padding-top": '4px', margin: "5px" } }, false, false)
             },
             text(state: InputState) {
               return renderIonInput(state, 'text');
@@ -101,85 +132,115 @@ export class IonicFormRender extends RenderInfo
                 return renderIonInput(state, 'password', state.value && <ion-input-password-toggle slot="end"></ion-input-password-toggle>)
             },
             textarea(state: InputState) {
-                return <ion-textarea
-                    label={state.label}
-                    label-placement="floating"
-                    fill="outline" 
-                    auto-grow="true"
-                    disabled={state.disabled}
-                    onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
-                    name={state.name}
-                    value={toString(state.value)}></ion-textarea>;
+                return renderFieldRow(
+                    <ion-textarea
+                        label={state.label}
+                        label-placement="floating"
+                        fill="outline" 
+                        auto-grow="true"
+                        disabled={state.disabled}
+                        onIonInput={(ev: any) => state.valueChanged(ev.target?.value)}
+                        name={state.name}
+                        value={toString(state.value)}></ion-textarea>,
+                        state
+                );
             },
             file(state: InputState) {
-                return (
-                  <div style={flexBasis} onClick={(ev) => {ev.stopImmediatePropagation(); openFileDialog(state.valueChanged)}}>
-                    <input type="file" style={ { display: 'none'} } disabled={state.disabled} onInput={(ev: any) => state.valueChanged(ev.target?.files[0])} name={state.name} files={state.value ? toFileList(state.value) : toEmptyFileList()}/>
-                    <ion-input
-                        style={ (state.value as any)?.name ? {"--padding-top": '4px'} : { "--padding-top": '4px', 'fontStyle': 'italic' }}
-                        label={state.label}
-                        label-placement={ state.value ? "floating" : 'stacked' }
-                        fill="outline"
-                        type="text"
-                        placeholder="no file selected"
-                        value={ state.value ? (state.value as any).name : 'no file selected'}
-                        readonly
-                        >{ state.value
-                            ? []
-                            : <ion-icon slot="end" icon="cloud-upload"></ion-icon> }
-                        </ion-input>
-                        { state.value && <ion-icon slot="end" icon="close-circle-outline" onClick={(ev) => { ev.stopImmediatePropagation(); state.valueChanged(null); } }></ion-icon> }
-                    
-                  </div>
-                );
+                const disabled = state.disabled || (state.allowsNull && state.emptyStringAllowed && state.value === null);
+                return <ion-grid>
+                        <ion-row class="ion-align-items-center ion-no-padding" style={{ alignContent: 'center', alignItems: 'center' }}  onClick={(ev) => {ev.stopImmediatePropagation(); openFileDialog(state.valueChanged)}}>
+                        <ion-col>
+                        </ion-col>
+                        <ion-col size="9">
+                            <input type="file" style={ { display: 'none'} } disabled={disabled} onInput={(ev: any) => state.valueChanged(ev.target?.files[0])} name={state.name} files={state.value ? toFileList(state.value) : toEmptyFileList()}/>
+                            <ion-input
+                                style={ (state.value as any)?.name ? {"--padding-top": '4px'} : { "--padding-top": '4px', 'fontStyle': 'italic' }}
+                                label={state.label}
+                                label-placement={ state.value ? "floating" : 'stacked' }
+                                fill="outline"
+                                type="text"
+                                placeholder="no file selected"
+                                value={ state.value ? (state.value as any).name : 'no file selected'}
+                                readonly
+                                >{ state.value
+                                    ? []
+                                    : <ion-icon slot="end" icon="cloud-upload"></ion-icon> }
+                                </ion-input>
+                        </ion-col>
+                        <ion-col>
+                        { state.value && <ion-icon icon="close-circle-outline" onClick={(ev) => { ev.stopImmediatePropagation(); state.valueChanged(null); } }></ion-icon> }    
+                        </ion-col>
+                        <ion-col>
+                            {(state.validationResult.valid && undefined === state.serverValidationError[''])  ? <div style={{color: 'green', fontSize: 'xx-large'}}>✅</div> : <div style={{color: 'green', filter: "grayscale(100%)", fontSize: 'xx-large'}}>✅</div>}
+                        </ion-col>
+                    </ion-row>
+                    {renderServerSideValidationErrors(state)}
+                    {renderClientSideValidationErrors(state)}
+                </ion-grid>
             },
             multi(state: InputState) {
                 const value = new Set(toArray(state.value));
                 if (!Array.isArray(state.additionalSettings?.options)) {
-                  return <ion-select
-                    label={state.label}
-                    label-placement="floating"
-                    fill="outline"
-                    value={state.value}
-                    disabled>
-                        <ion-select-option value={state.value}>{toString(value)}</ion-select-option>
-                    </ion-select>
+                  return renderFieldRow(
+                    <ion-select
+                        label={state.label}
+                        label-placement="floating"
+                        fill="outline"
+                        value={state.value}
+                        disabled>
+                            <ion-select-option value={state.value}>{toString(value)}</ion-select-option>
+                        </ion-select>,
+                        state,
+                        false
+                  );
                 }
               
-                return <ion-select
-                    interface="popover"
-                    label={state.label}
-                    label-placement="floating"
-                    fill="outline"
-                    multiple
-                    disabled={state.disabled}
-                    value={Array.from(value)}
-                    onIonChange={(ev: any) => state.valueChanged(ev.target.value)}>
-                  {state.additionalSettings.options.map((opt) => <ion-select-option value={toString(opt.value as any)}>{opt.name}</ion-select-option>)}
-                  </ion-select>
+                return renderFieldRow(
+                    <ion-select
+                        interface="popover"
+                        label={state.label}
+                        label-placement="floating"
+                        fill="outline"
+                        multiple
+                        disabled={state.disabled}
+                        value={Array.from(value)}
+                        onIonChange={(ev: any) => state.valueChanged(ev.target.value)}>
+                    {state.additionalSettings.options.map((opt) => <ion-select-option value={toString(opt.value as any)}>{opt.name}</ion-select-option>)}
+                    </ion-select>,
+                    state,
+                    false
+                );
             },
             select(state: InputState) {
                 if (!Array.isArray(state.additionalSettings?.options)) {
-                  return <ion-select
-                    label={state.label}
-                    label-placement="floating"
-                    fill="outline"
-                    value={state.value}
-                    disabled>
-                        <ion-select-option value={state.value}>{state.value}</ion-select-option>
-                    </ion-select>
+                  return renderFieldRow(
+                    <ion-select
+                        label={state.label}
+                        label-placement="floating"
+                        fill="outline"
+                        value={state.value}
+                        disabled>
+                            <ion-select-option value={state.value}>{state.value}</ion-select-option>
+                        </ion-select>,
+                        state,
+                        false
+                  );
                 }
               
-                return <ion-select
-                    interface="popover"
-                    label={state.label}
-                    label-placement="floating"
-                    fill="outline"
-                    disabled={state.disabled}
-                    value={state.value}
-                    onIonChange={(ev: any) => state.valueChanged(ev.target.value)}>
-                  {state.additionalSettings.options.map((opt) => <ion-select-option value={toString(opt.value as any)}>{opt.name}</ion-select-option>)}
-                  </ion-select>
+                return renderFieldRow(
+                    <ion-select
+                        interface="popover"
+                        label={state.label}
+                        label-placement="floating"
+                        fill="outline"
+                        disabled={state.disabled}
+                        value={state.value}
+                        onIonChange={(ev: any) => state.valueChanged(ev.target.value)}>
+                    {state.additionalSettings.options.map((opt) => <ion-select-option value={toString(opt.value as any)}>{opt.name}</ion-select-option>)}
+                    </ion-select>,
+                    state,
+                    false
+                );
             },
         };
     }

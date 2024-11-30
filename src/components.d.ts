@@ -15,6 +15,8 @@ export namespace Components {
         "validationErrors": NestedRecord<string>;
         "value": NestedRecord<SubmitField>;
     }
+    interface ApieIonicTest {
+    }
 }
 declare global {
     interface HTMLApieIonicFormElement extends Components.ApieIonicForm, HTMLStencilElement {
@@ -23,8 +25,15 @@ declare global {
         prototype: HTMLApieIonicFormElement;
         new (): HTMLApieIonicFormElement;
     };
+    interface HTMLApieIonicTestElement extends Components.ApieIonicTest, HTMLStencilElement {
+    }
+    var HTMLApieIonicTestElement: {
+        prototype: HTMLApieIonicTestElement;
+        new (): HTMLApieIonicTestElement;
+    };
     interface HTMLElementTagNameMap {
         "apie-ionic-form": HTMLApieIonicFormElement;
+        "apie-ionic-test": HTMLApieIonicTestElement;
     }
 }
 declare namespace LocalJSX {
@@ -35,8 +44,11 @@ declare namespace LocalJSX {
         "validationErrors"?: NestedRecord<string>;
         "value"?: NestedRecord<SubmitField>;
     }
+    interface ApieIonicTest {
+    }
     interface IntrinsicElements {
         "apie-ionic-form": ApieIonicForm;
+        "apie-ionic-test": ApieIonicTest;
     }
 }
 export { LocalJSX as JSX };
@@ -44,6 +56,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "apie-ionic-form": LocalJSX.ApieIonicForm & JSXBase.HTMLAttributes<HTMLApieIonicFormElement>;
+            "apie-ionic-test": LocalJSX.ApieIonicTest & JSXBase.HTMLAttributes<HTMLApieIonicTestElement>;
         }
     }
 }
